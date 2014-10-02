@@ -1,0 +1,22 @@
+
+"Linje","Varenummer","Antall","Beskrivelse","Produsentens navn & varenummer","RoHS","Pris","Lagerstatus","Ialt","Linjenote"
+
+1,"1021153","5","OPTOCOUPLER, TRANSISTOR O/P","FAIRCHILD SEMICONDUCTOR - 4N25SR2V-M","YES ","3.53","Lager","17.65",""
+2,"2083161","5","TRIAC DRIVER, DIP-6, RAND PHASE, SMD","FAIRCHILD SEMICONDUCTOR - FOD420S","YES ","14.67","Lager","73.35",""
+
+3,"1470962","5","BRIDGE RECTIFIER, 1.5A, 1000V","FAIRCHILD SEMICONDUCTOR - DF10S","YES ","3.17","Lager","15.85",""
+4,"1757881","5","TRIAC 600V 4A DPAK","NXP - BT136S-600,118","Y-EX ","5.52","Lager","27.6",""
+
+5,"1750946","25","RESISTOR, THICK FILM, 120 KOHM, 0.5W, 1%","PANASONIC - ERJP14F1203U","YES ","0.79","Lager","19.75",""
+6,"2333546","10","RESISTOR THICK FILM, 10KOHM, 5%, 1206","BOURNS - CR1206-JW-103ELF","YES ","0.26","Lager","2.6",""
+
+7,"2333573","10","RESISTOR THICK FILM, 470 OHM, 1%, 1206","BOURNS - CR1206-FX-4700ELF","YES ","0.32","Lager","3.2",""
+8,"2333539","10","RESISTOR THICK FILM, 1KOHM, 5%, 1206","BOURNS - CR1206-JW-102ELF","YES ","0.26","Lager","2.6",""
+
+"","","","","","","","",""
+"","","","","","","","Subtotal:","162.6"
+"","","","","","","","Online rabatt:","0.0"
+"","","","","","","","Frakt:","tillegges"
+"","","","","","","","Ialt:","162.6"
+"","","","","","","","Mva.:","40.65"
+"","","","","","","","Total:","203.25"
