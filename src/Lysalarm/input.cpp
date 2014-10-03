@@ -1,4 +1,9 @@
-
+/*! \file input.cpp
+ *
+ *  \brief Functions for reading button, switch and encoder.  
+ *  \author Geir Turtum
+ *  \date   03.okt.2014
+ */
 
 #include <arduino.h>
 

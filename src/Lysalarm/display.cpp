@@ -1,13 +1,16 @@
-/* Diplay driver
- * Driver for 7-segment led display, controlled by an 7-seg driver
- * Author: Eirin, Geir
- * Date: 06 mars 2014
+ /*! \file display.cpp
+ *
+ *  \brief Driver for 7-segment led display, controlled by an 7-seg driver 
+ *  \author Geir Turtum
+ *  \date   06.mars.2014
  */
+
 
 #include "arduino.h"
 
 #include "display.h"
 
+/* Ground pins. Pull low to light up number */
 #define DIGIT_0 A0
 #define DIGIT_1 A1
 #define DIGIT_2 A2
@@ -31,11 +34,12 @@ State = S_ON;
 /* State variable  */
 boolean Hide = 0; /* Used for blinking the digits */
 
+/* Pins used for writing numbers to segment bcd driver  */
 int pin_array_bcd[] = {
   2, 3, 4, 5};
 int pin_array_bcd_len = 4;
 
-/* index 0 is digit 0 on the display */
+/* index 0 is digit 0(starting from the right) on the display */
 uint8_t disp_number[] = {
   0, 0, 0, 0};
 
@@ -64,7 +68,7 @@ void disp_init(){
 
 /* Handles displaying of given digit. digit = [0..3] */
 void disp_num(int digit){
-
+//TODO simplify function by writing to port instead of pin
   digitalWrite(pin_array_bcd[0], LOW);
   digitalWrite(pin_array_bcd[1], LOW);
   digitalWrite(pin_array_bcd[2], LOW);

@@ -1,15 +1,23 @@
-/*
- * Lysalarm 
- * Author: Eirin, Geir
- * Date: 06 mars 2014
+ /*! \file Lysalarm.ino
+ *
+ *  \brief Main file for Lysalarm prosjekt. 
+ *  \author Geir and Eirin
+ *  \date   06.mars.2014
  */
+
+
 
 #include <TimerOne.h>
 
 #include "display.h"
 #include "input.h"
+#include "sound.h"
+#include "time.h"
 
-
+/* Every task added to scheduler have a firing period.
+ * The period is set in the setup() function. 
+ * 
+ */
 volatile uint8_t Display_int = 0;
 uint32_t period_display_int = 0; 
 
@@ -33,11 +41,13 @@ void setup() {
   /* Init display driver */
   //disp_init();
   input_init();
+  
+  sound_init();
 
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);   
 
-  Timer1.initialize(Timebase_scheduler_us); 
+  Timer1.initialize(Timebase_scheduler_us); //Fires every x us
   Timer1.attachInterrupt( scheduler ); // attach the service routine here
 
 
@@ -56,7 +66,6 @@ void setup() {
   period_encoder_int = set_period_us(10000);
   
   
-
   Serial.begin (115200);
   Serial.println("Welcome to sunalarm");
 }
@@ -66,9 +75,7 @@ void setup() {
 void loop(){
   
   static uint8_t counter = 0;      //this variable will be changed by encoder input
-  //int8_t tmpdata;
-   /**/
- // tmpdata = input_read_encoder();
+
   if( Encoder_int ) {
     Serial.print("Counter value: ");
     Serial.println(counter, DEC);
@@ -89,14 +96,14 @@ void loop(){
   /* Display State machine END */
 
   if( input_alarm_button()){
-    //ledMode = !ledMode;
+	//event
     //Do something
   }
   
    if(Select_button_int){
-    ledMode = !ledMode;
-    Select_button_int = 0;
     //Do something
+	//event
+    Select_button_int = 0;
   }
   
 
@@ -110,13 +117,14 @@ void loop(){
 
 
 /* --------------------------
- * Custom ISR Timer Routine
+ * Scheduler ISR Timer Routine
+ * 
  * --------------------------
  */
 void scheduler(){
   static uint32_t ticks = 0;
 
-  ticks++; /* ticks keep trak of time */
+  ticks++; /* ticks keep track of time */
 
   if((ticks % period_display_int) == 0){
     Display_int = 1;
