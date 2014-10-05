@@ -8,6 +8,8 @@
 #ifndef H_STATEMACHINE
 #define H_STATEMACHINE
 
+#include < Arduino.h>
+
 void event_EncoderUp(void);
 void event_EncoderDown(void);
 void event_EncoderButton(void);

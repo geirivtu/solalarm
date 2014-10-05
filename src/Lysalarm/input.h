@@ -8,7 +8,7 @@
 #ifndef H_INPUT
 #define H_INPUT
 
-#include <arduino.h>
+#include <Arduino.h>
 
 
 void input_init();

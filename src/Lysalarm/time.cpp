@@ -4,3 +4,5 @@
  *  \author Geir Turtum
  *  \date   03.okt.2014
  */
+ 
+#include "time.h"

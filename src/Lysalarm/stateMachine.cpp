@@ -5,6 +5,8 @@
  *  \date   03.okt.2014
  */
 
+#include "stateMachine.h"  
+
 enum state_t {
   S_NORMAL,
   S_SET_MIN_CLOCK,
@@ -16,15 +18,17 @@ enum state_t {
   S_WAKEUP,
   S_SNOOZE,
   S_DISPLAY_OFF
-} 
-State = S_NORMAL;
+};
 
-enum state_t PrevState = State; 
+static enum state_t State = S_NORMAL;
+static enum state_t PrevState = State; 
 /* States END */
 
 /* State variable  */
 
-void changeState(enum state_t newState){
+static void changeState(enum state_t newState){
+  //Serial.println("State --> %d", (int)newState);
+  Serial.println("Hi from SM");
   PrevState = State;
   State = newState;
 }

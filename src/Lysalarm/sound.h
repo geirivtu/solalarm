@@ -8,7 +8,7 @@
 #ifndef H_SOUND
 #define H_SOUND
 
-#include <arduino.h>
+#include "Arduino.h"
 
 void sound_init(void);
 void sound_play(void);

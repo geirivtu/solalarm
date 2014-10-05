@@ -13,6 +13,7 @@
 #include "input.h"
 #include "sound.h"
 #include "time.h"
+#include "stateMachine.h"
 
 /* Every task added to scheduler have a firing period.
  * The period is set in the setup() function. 
@@ -24,8 +25,8 @@ uint32_t period_display_int = 0;
 volatile uint8_t Display_blink_int = 0;
 uint32_t period_display_blink_int = 0; 
 
-volatile uint8_t Select_button_int = 0;
-uint32_t period_Select_button_int = 0; 
+volatile uint8_t Set_button_int = 0;
+uint32_t period_Set_button_int = 0; 
 
 volatile int8_t Encoder_int = 0;
 uint32_t period_encoder_int = 0; 
@@ -39,7 +40,10 @@ int ledMode = 0;
 void setup() {                
 
   /* Init display driver */
-  //disp_init();
+  disp_init();
+  
+  
+  
   input_init();
   
   sound_init();
@@ -60,10 +64,11 @@ void setup() {
   period_display_blink_int = set_period_us(250000);
 
   /* Period for Select button read the digits */
-  period_Select_button_int = set_period_us(50000);
+  period_Set_button_int = set_period_us(50000);
   
   /* Period for encoder read */
   period_encoder_int = set_period_us(10000);
+  
   
   
   Serial.begin (115200);
@@ -74,40 +79,44 @@ void setup() {
 /* main loop checks for events and sends them to the state machine. */
 void loop(){
   
-  static uint8_t counter = 0;      //this variable will be changed by encoder input
+ static int8_t encoder = 0;      //this variable will be changed by encoder input
 
-  if( Encoder_int ) {
-    Serial.print("Counter value: ");
-    Serial.println(counter, DEC);
-    counter += Encoder_int;
+
+  if( Encoder_int ){    
+    encoder = input_read_encoder();
+    if(encoder==1) event_EncoderUp();
+    else if(encoder==-1) event_EncoderDown();
+   
+    Encoder_int = 0;
   }
 
 
   /* Display State machine */
-  if(Display_int){
-    //disp_digit_int();
+  if(Display_int)
+  {
+    disp_digit_int();
     Display_int = 0;  
   }
 
-  if(Display_blink_int){
-    //disp_blink_int();
+  if(Display_blink_int)
+  {
+    disp_blink_int();
     Display_blink_int = 0; 
   }
   /* Display State machine END */
 
-  if( input_alarm_button()){
-	//event
-    //Do something
+  if( input_alarm_button())
+  {
+    if(input_get_alarm_button_status()) event_AlarmOn();
+    else event_AlarmOff();
   }
   
-   if(Select_button_int){
-    //Do something
-	//event
-    Select_button_int = 0;
+   if(Set_button_int)
+   {
+    event_SetButton();
+    Set_button_int = 0;
   }
   
-
-
   digitalWrite(led, ledMode); //Debug
 }
 
@@ -134,12 +143,12 @@ void scheduler(){
     Display_blink_int = 1;
   }
   
-  if((ticks % period_Select_button_int) == 0){
-    Select_button_int = input_select_button();
+  if((ticks % period_Set_button_int) == 0){
+    Set_button_int = input_select_button();
   }
 
   if((ticks % period_encoder_int) == 0){
-    Encoder_int = input_read_encoder();
+    Encoder_int = 1;
   }
 
 }
