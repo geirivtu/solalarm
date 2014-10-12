@@ -13,6 +13,7 @@
 #include "input.h"
 #include "sound.h"
 #include "time.h"
+#include "light.h"
 #include "stateMachine.h"
 
 /* Every task added to scheduler have a firing period.
@@ -28,6 +29,9 @@ uint32_t period_display_blink_int = 0;
 volatile uint8_t Set_button_int = 0;
 uint32_t period_Set_button_int = 0; 
 
+volatile uint8_t Alarm_switch_int = 0;
+uint32_t period_Alarm_switch_int = 0; 
+
 volatile int8_t Encoder_int = 0;
 uint32_t period_encoder_int = 0; 
 
@@ -42,11 +46,13 @@ void setup() {
   /* Init display driver */
   disp_init();
   
-  
+  light_init();
   
   input_init();
   
   sound_init();
+  
+  time_init();
 
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);   
@@ -63,8 +69,11 @@ void setup() {
   /* Period for blinking the digits */
   period_display_blink_int = set_period_us(250000);
 
-  /* Period for Select button read the digits */
+  /* Period for Select button */
   period_Set_button_int = set_period_us(50000);
+  
+  /* Period for Alarm switch read  */
+  period_Alarm_switch_int = set_period_us(50000);
   
   /* Period for encoder read */
   period_encoder_int = set_period_us(10000);
@@ -105,10 +114,12 @@ void loop(){
   }
   /* Display State machine END */
 
-  if( input_alarm_button())
+  if( Alarm_switch_int )
   {
-    if(input_get_alarm_button_status()) event_AlarmOn();
-    else event_AlarmOff();
+    if(input_get_alarm_button_status()) event_AlarmOff();
+    else event_AlarmOn();
+    
+    Alarm_switch_int = 0;
   }
   
    if(Set_button_int)
@@ -140,11 +151,15 @@ void scheduler(){
   }
 
   if((ticks % period_display_blink_int) == 0){
-    Display_blink_int = 1;
+      = 1;
   }
   
   if((ticks % period_Set_button_int) == 0){
     Set_button_int = input_select_button();
+  }
+  
+  if((ticks % period_Alarm_switch_int) == 0){
+    Alarm_switch_int = input_alarm_button();
   }
 
   if((ticks % period_encoder_int) == 0){

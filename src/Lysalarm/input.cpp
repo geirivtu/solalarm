@@ -52,7 +52,7 @@ boolean input_select_button(){
 
   /* If BUTTON_PIN is pressed AND was previously not pressed */
   if(button_status == 0 && prev_button_status == 1){
-    delay(15);
+    //delay(15);
     return_value = true;
   }
   prev_button_status = button_status;
@@ -68,7 +68,7 @@ boolean input_alarm_button(){
 
   /* If BUTTON_PIN is pressed AND was previously not pressed */
   if(button_status == !prev_button_status){
-    delay(15);
+    //delay(15);
     Alarm_button_status = button_status; /* Used by input_get_alarm_button_status()  */
     return_value = true;
   }
