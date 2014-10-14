@@ -16,10 +16,21 @@
 #include "light.h"
 #include "stateMachine.h"
 
-/* Every task added to scheduler have a firing period.
- * The period is set in the setup() function. 
- * 
- */
+ 
+#define NR_OF_TASK 10 
+ 
+struct task_t {
+  char name[15];
+  uint8_t execute=0;
+  uint8_t period;
+  void (*function)(void);
+ };
+ 
+ 
+
+struct task_t Tasks[NR_OF_TASK];
+ 
+ /*
 volatile uint8_t Display_int = 0;
 uint32_t period_display_int = 0; 
 
@@ -37,12 +48,52 @@ uint32_t period_encoder_int = 0;
 
 volatile int8_t Time_minute_int = 0;
 uint32_t period_time_minute_int = 0; 
+*/
+
 
 const uint32_t Timebase_scheduler_us = 1000;
 
 
 int led = 13;
 int ledMode = 0;
+
+void taskAdd(char * taskName, uint32_t taskPeriod, void (*functionPtr)(void)){
+  static uint8_t i = 0;
+  
+  if(i >= NR_OF_TASK){
+    Serial.println("To many tasks!");
+  }
+  
+  strcpy(Tasks[i].name, taskName);
+  Tasks[i].period = taskPeriod;
+  Tasks[i].function = functionPtr;
+  
+
+  i++;
+}
+
+void encFunc(){
+  int8_t encoder = 0;      //this variable will be changed by encoder input
+  encoder = input_read_encoder();
+  if(encoder==1) event_EncoderUp();
+  else if(encoder==-1) event_EncoderDown();
+
+}
+
+void alarmFunc(){
+  if(input_get_alarm_button_status()){
+    event_AlarmOff();
+  }
+  else{
+    event_AlarmOn();
+  }
+
+}
+
+void timeFunc(){
+
+
+}
 
 void setup() {                
 
@@ -60,29 +111,39 @@ void setup() {
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);   
 
-  Timer1.initialize(Timebase_scheduler_us); //Fires every x us
-  Timer1.attachInterrupt( scheduler ); // attach the service routine here
+
+
+  
+  taskAdd("display_int", 3000, &disp_digit_int);
+  taskAdd("display_blink_int", 250000, &disp_blink_int);
+  taskAdd("Set_button_int", 50000, &event_SetButton);
+  taskAdd("Alarm_switch_int", 50000, &alarmFunc);
+  taskAdd("encoder_int", 10000, &encFunc);
+  taskAdd("time_minute_int", 500000, &timeFunc);
 
 
   /* Set period for tasks */
 
   /* Period for updating display digits */
-  period_display_int = set_period_us(3000);
+  //period_display_int = set_period_us(3000);
 
   /* Period for blinking the digits */
-  period_display_blink_int = set_period_us(250000);
+  //period_display_blink_int = set_period_us(250000);
 
   /* Period for Select button */
-  period_Set_button_int = set_period_us(50000);
+  //period_Set_button_int = set_period_us(50000);
   
   /* Period for Alarm switch read  */
-  period_Alarm_switch_int = set_period_us(50000);
+ // period_Alarm_switch_int = set_period_us(50000);
   
   /* Period for encoder read */
-  period_encoder_int = set_period_us(10000);
+ // period_encoder_int = set_period_us(10000);
   
   /* Period for time minute interrupt */
-  period_time_minute_int = set_period_us(500000);
+  //period_time_minute_int = set_period_us(500000);
+  
+  Timer1.initialize(Timebase_scheduler_us); //Fires every x us
+  Timer1.attachInterrupt( scheduler ); // attach the service routine here
   
   
   Serial.begin (115200);
@@ -93,9 +154,9 @@ void setup() {
 /* main loop checks for events and sends them to the state machine. */
 void loop(){
   
- static int8_t encoder = 0;      //this variable will be changed by encoder input
 
-
+  /*
+  
   if( Encoder_int ){    
     encoder = input_read_encoder();
     if(encoder==1) event_EncoderUp();
@@ -104,8 +165,7 @@ void loop(){
     Encoder_int = 0;
   }
 
-
-  /* Display State machine */
+  
   if(Display_int)
   {
     disp_digit_int();
@@ -117,7 +177,7 @@ void loop(){
     disp_blink_int();
     Display_blink_int = 0; 
   }
-  /* Display State machine END */
+
 
   if( Alarm_switch_int )
   {
@@ -138,9 +198,18 @@ void loop(){
      
     Time_minute_int = 0;
    }
+   */
    
+   uint8_t i;
+   for(i=0; i<NR_OF_TASK; i++){
+    if(Tasks[i].execute == 1){
+    
+      (*Tasks[i].function)();
+      Tasks[i].execute = 0;
+    }
+   }
   
-  digitalWrite(led, ledMode); //Debug
+  //digitalWrite(led, ledMode); //Debug
 }
 
 
@@ -157,13 +226,21 @@ void scheduler(){
   static uint32_t ticks = 0;
 
   ticks++; /* ticks keep track of time */
+  
+  uint8_t i;
+  for(i=0; i<NR_OF_TASK; i++){
+    if((ticks % Tasks[i].period) == 0){
+      Tasks[i].execute = 1;
+    }
+  }
 
+  /*
   if((ticks % period_display_int) == 0){
     Display_int = 1;
   }
 
   if((ticks % period_display_blink_int) == 0){
-      = 1;
+    Display_blink_int  = 1;
   }
   
   if((ticks % period_Set_button_int) == 0){
@@ -181,7 +258,7 @@ void scheduler(){
   if((ticks % period_time_minute_int) == 0){
     Time_minute_int = 1;
   }
-
+*/
 }
 
 /* --------------------------
