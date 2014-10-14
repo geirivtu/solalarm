@@ -20,7 +20,7 @@
 #define NR_OF_TASK 10 
  
 struct task_t {
-  char name[15];
+  char name[20];
   uint8_t execute=0;
   uint8_t period;
   void (*function)(void);
