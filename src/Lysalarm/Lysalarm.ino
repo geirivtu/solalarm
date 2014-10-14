@@ -35,6 +35,9 @@ uint32_t period_Alarm_switch_int = 0;
 volatile int8_t Encoder_int = 0;
 uint32_t period_encoder_int = 0; 
 
+volatile int8_t Time_minute_int = 0;
+uint32_t period_time_minute_int = 0; 
+
 const uint32_t Timebase_scheduler_us = 1000;
 
 
@@ -78,6 +81,8 @@ void setup() {
   /* Period for encoder read */
   period_encoder_int = set_period_us(10000);
   
+  /* Period for time minute interrupt */
+  period_time_minute_int = set_period_us(500000);
   
   
   Serial.begin (115200);
@@ -128,6 +133,13 @@ void loop(){
     Set_button_int = 0;
   }
   
+   if(Time_minute_int)
+   {
+     
+    Time_minute_int = 0;
+   }
+   
+  
   digitalWrite(led, ledMode); //Debug
 }
 
@@ -164,6 +176,10 @@ void scheduler(){
 
   if((ticks % period_encoder_int) == 0){
     Encoder_int = 1;
+  }
+  
+  if((ticks % period_time_minute_int) == 0){
+    Time_minute_int = 1;
   }
 
 }
