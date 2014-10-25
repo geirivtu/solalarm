@@ -69,6 +69,24 @@ byte bcdToDec(byte val)
 // 2) Starts the clock
 // 3) Sets hour mode to 24 hour clock
 // Assumes you're passing in valid numbers, Probably need to put in checks for valid numbers.
+
+
+void setTimeDs1307()                
+{
+ 
+
+   Wire.beginTransmission(DS1307_I2C_ADDRESS);
+   Wire.write(zero);
+   Wire.write(decToBcd(second) & 0x7f);    // 0 to bit 7 starts the clock
+   Wire.write(decToBcd(minute));
+   Wire.write(decToBcd(hour));      // If you want 12 hour am/pm you need to set
+                                   // bit 6 (also need to change readDateDs1307)
+   Wire.write(decToBcd(dayOfWeek));
+   Wire.write(decToBcd(dayOfMonth));
+   Wire.write(decToBcd(month));
+   Wire.write(decToBcd(year));
+   Wire.endTransmission();
+}
  
 void setDateDs1307()                
 {
