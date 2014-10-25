@@ -9,10 +9,11 @@
 
 #include <TimerOne.h>
 
+
 #include "display.h"
 #include "input.h"
 #include "sound.h"
-#include "time.h"
+//#include "time.h"
 #include "light.h"
 #include "stateMachine.h"
 
@@ -45,6 +46,8 @@ int led = 13;
 int ledMode = 0;
 
 void setup() {                
+  
+
 
   /* Init display driver */
   disp_init();
@@ -55,7 +58,7 @@ void setup() {
   
   sound_init();
   
-  time_init();
+  //time_init();
 
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);   
@@ -163,7 +166,7 @@ void scheduler(){
   }
 
   if((ticks % period_display_blink_int) == 0){
-      = 1;
+     Display_blink_int = 1;
   }
   
   if((ticks % period_Set_button_int) == 0){

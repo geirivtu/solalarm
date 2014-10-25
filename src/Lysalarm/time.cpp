@@ -7,7 +7,7 @@
  
 #include "time.h"
 
-#include "Wire.h"
+#include <Wire.h>
 #define DS1307_I2C_ADDRESS 0x68  // This is the I2C address
 
 
@@ -110,6 +110,24 @@ byte bcdToDec(byte val)
 
 
 
+
+
+/* Get hours using 24 hour format and minutes from RTC */
+void RTC_get_time(byte* hour_ptr, byte* minute_ptr){
+
+  // Reset the register pointer
+  //Wire.beginTransmission(DS1307_I2C_ADDRESS);
+  //Wire.write(i2c_minute_address);
+  //Wire.endTransmission();
+
+  //Wire.requestFrom(DS1307_I2C_ADDRESS, 2); /* Request 2 bytes */
+
+  // A few of these need masks because certain bits are control bits
+  //*minute_ptr     = bcdToDec(Wire.read());
+  //*hour_ptr       = bcdToDec(Wire.read() & 0x3f);  // Need to change this if 12 hour am/pm
+
+}
+
 bool RTC_minute_elapsed(){
   byte hour_tmp, minute_tmp, prev_minute;
   prev_minute = 0;
@@ -126,34 +144,18 @@ bool RTC_minute_elapsed(){
 
 }
 
-/* Get hours using 24 hour format and minutes from RTC */
-void RTC_get_time(byte* hour_ptr, byte* minute_ptr){
-
-  // Reset the register pointer
-  Wire.beginTransmission(DS1307_I2C_ADDRESS);
-  Wire.write(i2c_minute_address);
-  Wire.endTransmission();
-
-  Wire.requestFrom(DS1307_I2C_ADDRESS, 2); /* Request 2 bytes */
-
-  // A few of these need masks because certain bits are control bits
-  *minute_ptr     = bcdToDec(Wire.read());
-  *hour_ptr       = bcdToDec(Wire.read() & 0x3f);  // Need to change this if 12 hour am/pm
-
-}
-
 
 void RTC_set_time(struct time_t *time)                
 {
   
-   Wire.beginTransmission(DS1307_I2C_ADDRESS);
-   Wire.write(zero);
-   Wire.write(decToBcd(0) & 0x7f);    //sec. bit 7 enables clocks when low
-   Wire.write(decToBcd(time->minute));
-   Wire.write(decToBcd(time->hour));      // If you want 12 hour am/pm you need to set
+   //Wire.beginTransmission(DS1307_I2C_ADDRESS);
+   //Wire.write(zero);
+   //Wire.write(decToBcd(0) & 0x7f);    //sec. bit 7 enables clocks when low
+   //Wire.write(decToBcd(time->minute));
+   //Wire.write(decToBcd(time->hour));      // If you want 12 hour am/pm you need to set
                                    // bit 6 (also need to change readDateDs1307)
 
-   Wire.endTransmission();
+   //Wire.endTransmission();
 }
  
  

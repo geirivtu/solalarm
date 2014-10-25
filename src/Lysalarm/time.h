@@ -9,7 +9,7 @@
 #ifndef H_TIME
 #define H_TIME
 
-
+#include <Arduino.h>
 
 struct time_t {
   int sec;
