@@ -8,13 +8,13 @@ byte zero = 0x00; //workaround for issue #527
 
 void setup(){
   Wire.begin();
-  Serial.begin(9600);
+  Serial.begin(115200);
   setDateTime(); //MUST CONFIGURE IN FUNCTION
 }
 
 void loop(){
   printDate();
-  delay(1000);
+  delay(10000);
 }
 
 void setDateTime(){
