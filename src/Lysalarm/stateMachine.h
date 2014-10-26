@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 
+void stateMachine_init(void);
 void event_EncoderUp(void);
 void event_EncoderDown(void);
 void event_EncoderButton(void);

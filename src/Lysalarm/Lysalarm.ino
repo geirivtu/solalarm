@@ -1,19 +1,20 @@
- /*! \file Lysalarm.ino
+  /*! \file Lysalarm.ino
  *
  *  \brief Main file for Lysalarm prosjekt. 
  *  \author Geir and Eirin
  *  \date   06.mars.2014
  */
 
-
+//IDE: Bruke en av de hjemmeautomasjons systemene til å dimme lampe
+// Hvis lysalarm har en sender som kan styre og dimme lamper
 
 #include <TimerOne.h>
-
+#include <Wire.h>
 
 #include "display.h"
 #include "input.h"
 #include "sound.h"
-//#include "time.h"
+#include "time.h"
 #include "light.h"
 #include "stateMachine.h"
 
@@ -58,7 +59,12 @@ void setup() {
   
   sound_init();
   
-  //time_init();
+  time_init();
+  
+  
+  stateMachine_init();
+  
+  
 
   // initialize the digital pin as an output.
   pinMode(led, OUTPUT);   
@@ -73,7 +79,7 @@ void setup() {
   period_display_int = set_period_us(3000);
 
   /* Period for blinking the digits */
-  period_display_blink_int = set_period_us(250000);
+  period_display_blink_int = set_period_us(120000);
 
   /* Period for Select button */
   period_Set_button_int = set_period_us(50000);
@@ -138,7 +144,13 @@ void loop(){
   
    if(Time_minute_int)
    {
-     
+     if(RTC_minute_elapsed()){
+       event_MinuteElapsed(); 
+	   
+	   if(time_alarm()){
+			event_Wakeuptime();
+	   }
+     }
     Time_minute_int = 0;
    }
    

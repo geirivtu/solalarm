@@ -46,6 +46,12 @@ static enum state_t PrevState = State;
 
 /* State variable  */
 
+void stateMachine_init(void){
+  
+  disp_write(Clock.hour, Clock.minute);
+  
+}
+
 static void changeState(enum state_t newState){
   Serial.print("State --> ");
   Serial.println(stateStr[newState]);
@@ -63,11 +69,13 @@ void event_EncoderUp(void){
   case S_SET_MIN_CLOCK:
     // IncMinClock
     time_inc_min(&Clock);
+	RTC_set_time(&Clock);
     disp_write(Clock.hour, Clock.minute);
     break;
   case S_SET_HOUR_CLOCK:
     //IncHourClock
     time_inc_hour(&Clock);
+	RTC_set_time(&Clock);
     disp_write(Clock.hour, Clock.minute);
     break;
   case S_SET_MIN_ALARM:
@@ -114,11 +122,13 @@ void event_EncoderDown(void){
   case S_SET_MIN_CLOCK:
     // DecMinClock
     time_dec_min(&Clock);
+	RTC_set_time(&Clock);
     disp_write(Clock.hour, Clock.minute);
     break;
   case S_SET_HOUR_CLOCK:
     // DecHourClock
     time_dec_hour(&Clock);
+	RTC_set_time(&Clock);
     disp_write(Clock.hour, Clock.minute);
     break;
   case S_SET_MIN_ALARM:
@@ -221,6 +231,8 @@ void event_SetButton(void){
     changeState(S_SNOOZE);
     break;
   case S_SNOOZE:
+	sound_play();    //TODO remove
+	changeState(S_WAKEUP); //TODO remove
     break;
   case S_DISPLAY_OFF:
     // DisplayShow
@@ -405,26 +417,42 @@ void event_Sunrisetime(void){
 void event_MinuteElapsed(void){
   switch(State){
   case S_NORMAL:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);
+	
     break;
   case S_SET_MIN_CLOCK:
     break;
   case S_SET_HOUR_CLOCK:
     break;
   case S_SET_MIN_ALARM:
+	time_update_clock(&Clock);
     break;
   case S_SET_HOUR_ALARM:
+	time_update_clock(&Clock);
     break;
   case S_ALARM_ON:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);	
+	
     break;
   case S_SUNRISE:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);
     // LightUp
     light_inc();
     break;
   case S_WAKEUP:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);
     break;
   case S_SNOOZE:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);
     break;
   case S_DISPLAY_OFF:
+	time_update_clock(&Clock);
+	disp_write(Clock.hour, Clock.minute);
     break;
   }
 }

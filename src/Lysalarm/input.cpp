@@ -38,10 +38,20 @@ void input_init(){
 int8_t input_read_encoder(void){
   static int8_t enc_states[] = {0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0};
   static uint8_t old_AB = 0;
+  static int8_t counter = 0;
+  
   old_AB <<= 2;                   //remember previous state
   old_AB |= (digitalRead(ROTARY_ENC_A)<<1) | digitalRead(ROTARY_ENC_B);
   
-  return ( enc_states[( old_AB & 0x0f )]);  
+  counter += enc_states[( old_AB & 0x0f )];
+  
+  if(counter > 4){
+    counter = 0;
+    return 1;
+  }else if(counter < -4){
+    counter = 0;
+    return -1;
+  }else return 0;
 }
 
 /* Returns true when button has been pressed */
