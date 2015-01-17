@@ -41,7 +41,7 @@ char * stateStr[] = {  "S_NORMAL",
   "S_DISPLAY_OFF"};
 
 static enum state_t State = S_NORMAL;
-static enum state_t PrevState = State; 
+static enum state_t PrevState = State; //Keeps track of the previous state of the system
 /* States END */
 
 /* State variable  */
@@ -60,6 +60,9 @@ static void changeState(enum state_t newState){
 }
 
 void event_EncoderUp(void){
+
+  // DisplayShow
+  disp_on();
 
   switch(State){
   case S_NORMAL:
@@ -81,11 +84,13 @@ void event_EncoderUp(void){
   case S_SET_MIN_ALARM:
     // IncMinAlarm
     time_inc_min(&Alarm);
+	time_inc_min(&Sunrise);
     disp_write(Alarm.hour, Alarm.minute);
     break;
   case S_SET_HOUR_ALARM:
     // IncHourAlarm
     time_inc_hour(&Alarm);
+	time_inc_hour(&Sunrise);
     disp_write(Alarm.hour, Alarm.minute);
     break;
   case S_ALARM_ON:
@@ -104,16 +109,15 @@ void event_EncoderUp(void){
     // LightUp
     light_inc();
     break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(PrevState);
-    break;
   }
 }
 
 
 void event_EncoderDown(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
   //light down
@@ -134,11 +138,13 @@ void event_EncoderDown(void){
   case S_SET_MIN_ALARM:
   // DecMinAlarm
     time_dec_min(&Alarm);
+	time_dec_min(&Sunrise);
     disp_write(Alarm.hour, Alarm.minute);
     break;
   case S_SET_HOUR_ALARM:
     // DecHourAlarm
     time_dec_hour(&Alarm);
+	time_dec_hour(&Sunrise);
     disp_write(Alarm.hour, Alarm.minute);
     break;
   case S_ALARM_ON:
@@ -157,15 +163,14 @@ void event_EncoderDown(void){
   // LightDown
     light_dec();
     break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(PrevState);
-    break;
   }
 }
 
 void event_EncoderButton(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
     break;
@@ -185,17 +190,16 @@ void event_EncoderButton(void){
     break;
   case S_SNOOZE:
     break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(PrevState);
-    break;
   }
 }
 
 
 
 void event_SetButton(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
     disp_min_blink();
@@ -234,15 +238,14 @@ void event_SetButton(void){
 	sound_play();    //TODO remove
 	changeState(S_WAKEUP); //TODO remove
     break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(PrevState);
-    break;
   }
 }
 
 void event_AlarmOn(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
     changeState(S_ALARM_ON);
@@ -266,11 +269,6 @@ void event_AlarmOn(void){
   case S_WAKEUP:
     break;
   case S_SNOOZE:
-    break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(S_ALARM_ON);
     break;
   }
 }
@@ -310,15 +308,14 @@ void event_AlarmOff(void){
   case S_SNOOZE:
     changeState(S_NORMAL);
     break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(S_NORMAL);
-    break;
   }
 }
 
 void event_Wakeuptime(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
     break;
@@ -331,11 +328,15 @@ void event_Wakeuptime(void){
   case S_SET_HOUR_ALARM:
     break;
   case S_ALARM_ON:
+	//Light on
+	light_on();
     // SoundOn
     sound_play();
     changeState(S_WAKEUP);
     break;
   case S_SUNRISE:
+	//Light on
+	light_on();
     // SoundOn
     sound_play();
     changeState(S_WAKEUP);
@@ -343,16 +344,15 @@ void event_Wakeuptime(void){
   case S_WAKEUP:
     break;
   case S_SNOOZE:
-    break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
-    changeState(S_WAKEUP);
     break;
   }
 }
 
 void event_SnoozeTimeout(void){
+
+  // DisplayShow
+  disp_on();
+
   switch(State){
   case S_NORMAL:
     break;
@@ -371,13 +371,6 @@ void event_SnoozeTimeout(void){
   case S_WAKEUP:
     break;
   case S_SNOOZE:
-    // SoundOn
-    sound_play();
-    changeState(S_WAKEUP);
-    break;
-  case S_DISPLAY_OFF:
-    // DisplayShow
-    disp_on();
     // SoundOn
     sound_play();
     changeState(S_WAKEUP);
@@ -405,11 +398,6 @@ void event_Sunrisetime(void){
   case S_WAKEUP:
     break;
   case S_SNOOZE:
-    break;
-  case S_DISPLAY_OFF:
-    // DisplayShow 
-    disp_on();
-    changeState(S_SUNRISE);
     break;
   }
 }
@@ -450,10 +438,6 @@ void event_MinuteElapsed(void){
 	time_update_clock(&Clock);
 	disp_write(Clock.hour, Clock.minute);
     break;
-  case S_DISPLAY_OFF:
-	time_update_clock(&Clock);
-	disp_write(Clock.hour, Clock.minute);
-    break;
   }
 }
 
@@ -479,8 +463,6 @@ void event_DisplayOffTimeout(void){
   case S_WAKEUP:
     break;
   case S_SNOOZE:
-    break;
-  case S_DISPLAY_OFF:
     break;
   }
 }

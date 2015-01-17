@@ -23,13 +23,16 @@ struct time_t {
 
 extern struct time_t Clock;
 extern struct time_t Alarm;
+extern struct time_t Sunrise;
 
 void time_init(void);
 void time_inc_min(struct time_t *time);
 void time_dec_min(struct time_t *time);
 void time_inc_hour(struct time_t *time);
 void time_dec_hour(struct time_t *time);
+void time_set(struct time_t *time, int hour, int minute);
 void time_print(struct time_t *time);
+boolean time_compare(struct time_t time1, struct time_t time2);
 bool time_alarm(void);
 
 void time_update_clock(struct time_t *time);

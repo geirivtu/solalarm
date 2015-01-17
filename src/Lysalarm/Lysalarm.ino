@@ -58,7 +58,7 @@ void setup() {
   input_init();
   
   sound_init();
-  
+
   time_init();
   
   
@@ -147,7 +147,10 @@ void loop(){
      if(RTC_minute_elapsed()){
        event_MinuteElapsed(); 
 	   
-	   if(time_alarm()){
+	   if(time_compare(Clock, Sunrise)){
+			event_Sunrisetime();
+	   }
+	   if(time_compare(Clock, Alarm)){
 			event_Wakeuptime();
 	   }
      }

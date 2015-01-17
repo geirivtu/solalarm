@@ -39,21 +39,9 @@ void time_init(void){
   byte hour, minute;
   RTC_get_time(&hour, &minute);
   
-  
-  
-  //Clock.sec = 1;
-  Clock.minute = minute;
-  Clock.hour = hour;
-  //Clock.day = 4;
-  //Clock.month = 4;
-  //Clock.year = 2014;
-  
-  //Alarm.sec = 4;
-  Alarm.minute = 50;
-  Alarm.hour = 8;
-  //Alarm.day = 4;
-  //Alarm.month = 4;
-  //Alarm.year = 2014;
+  time_set(&Clock, hour, minute);
+  time_set(&Alarm, 7, 30);
+  time_set(&Sunrise, 7, 15);
   
   RTC_set_time(&Clock);
   
@@ -120,9 +108,15 @@ void time_set(struct time_t *time, int hour, int minute){
 }
 
 
-bool time_alarm(){
+bool time_alarm(){ //TODO dont need you anymore
   
   return (Clock.hour == Alarm.hour) && (Clock.minute == Alarm.minute);
+  
+}
+
+boolean time_compare(struct time_t time1, struct time_t time2){
+  
+  return (time1.hour == time2.hour) && (time1.minute == time2.minute);
   
 }
 
@@ -132,14 +126,16 @@ void time_update_clock(struct time_t *time){
   byte hour, minute;
   // Reset the register pointer
   Wire.beginTransmission(DS1307_I2C_ADDRESS);
-  Wire.write(i2c_minute_address-1); //Now second
+  Wire.write(i2c_minute_address); 
+	//Wire.write(i2c_minute_address-1); //Debug
   Wire.endTransmission();
 
-  Wire.requestFrom(DS1307_I2C_ADDRESS, 2+1); /* Request 2 bytes */ //TODO
+  Wire.requestFrom(DS1307_I2C_ADDRESS, 2); /* Request 2 bytes */ 
+  //Wire.requestFrom(DS1307_I2C_ADDRESS, 2+1); /* Request 2 bytes */ //TODO
 
   // A few of these need masks because certain bits are control bits
   minute     = bcdToDec(Wire.read() & 0x7f);
-  Wire.read();
+  //Wire.read();
   hour      = bcdToDec(Wire.read() & 0x3f);  // Need to change this if 12 hour am/pm
 
   time->minute = minute;
@@ -159,14 +155,16 @@ void RTC_get_time(byte* hour_ptr, byte* minute_ptr){
 
   // Reset the register pointer
   Wire.beginTransmission(DS1307_I2C_ADDRESS);
-  Wire.write(i2c_minute_address-1); //TODO
+  Wire.write(i2c_minute_address); 
+  //Wire.write(i2c_minute_address-1); //TODO
   Wire.endTransmission();
 
-  Wire.requestFrom(DS1307_I2C_ADDRESS, 2+1); /* Request 2 bytes */ //TODO
+  Wire.requestFrom(DS1307_I2C_ADDRESS, 2); /* Request 2 bytes */ 
+  //Wire.requestFrom(DS1307_I2C_ADDRESS, 2+1); /* Request 2 bytes */ //TODO
 
   // A few of these need masks because certain bits are control bits
   *minute_ptr     = bcdToDec(Wire.read() & 0x7f);
-  Wire.read();
+  //Wire.read();
   *hour_ptr       = bcdToDec(Wire.read() & 0x3f);  // Need to change this if 12 hour am/pm
 
 }

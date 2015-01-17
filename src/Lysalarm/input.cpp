@@ -9,8 +9,8 @@
 
 #include "input.h"
 
-#define BUTTON_PIN 6
-#define ALARM_SWITCH_PIN 7
+#define BUTTON_PIN 6 //Other button pin to GND
+#define ALARM_SWITCH_PIN 7 //Other button pin to GND
 
 #define ROTARY_ENC_A 8
 #define ROTARY_ENC_B 9

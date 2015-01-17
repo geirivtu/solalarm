@@ -39,7 +39,7 @@ void light_off(){
 
 void light_inc(){
   
-  Brightness +=5;
+  Brightness +=15;
   if(Brightness > 255) Brightness = 255;
   analogWrite(LIGHT_PIN, Brightness);
   
@@ -47,7 +47,7 @@ void light_inc(){
 
 void light_dec(){
   
-  Brightness -= 5;
+  Brightness -= 15;
   if(Brightness < 0) Brightness=0; 
   analogWrite(LIGHT_PIN, Brightness);
   
